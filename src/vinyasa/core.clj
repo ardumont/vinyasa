@@ -1,40 +1,36 @@
 (ns vinyasa.core
-  (:require [cemerick.pomegranate]
-            [clojure.tools.namespace.repl]
-            [clojure.stacktrace]
-            [clj-stacktrace.repl]
-            [clojure.pprint]
-            [clojure.repl]
-            [spyscope.core]))
+  (:require [vinyasa.intern :refer [intern]])
+  (:refer-clojure :exclude [intern]))
 
-(alter-var-root #'clojure.stacktrace/print-cause-trace
-                (constantly clj-stacktrace.repl/pst))
-(intern 'clojure.core 'refresh clojure.tools.namespace.repl/refresh)
-(intern 'clojure.core 'pprint  clojure.pprint/pprint)
-(intern 'clojure.core
-        (with-meta 'doc {:macro true})
-        @#'clojure.repl/doc)
-(intern 'clojure.core
-        (with-meta 'source {:macro true})
-        @#'clojure.repl/source)
+(defn enable [args]
+  (let [st (set (map str args))]
+    (when (get st "lein")
+      (intern lein vinyasa.lein/lein :require))
+    (when (get st "pull")
+      (intern pull vinyasa.pull/pull :require))
+    (when (get st "inspect")
+      (intern inspect vinyasa.inspect/inspect))
+    (when (get st "pprint")
+      (intern pprint clojure.pprint/pprint :require))
+    (when (get st "refresh")
+      (intern refresh clojure.tools.namespace.repl/refresh :require))
+    (when (get st "spyscope")
+      (require 'spyscope.core))
+    (when (get st "ansi")
+      (intern color io.aviso.ansi/inverse :require))
+    (when (get st "binary")
+      (intern write-binary io.aviso.binary/write-binary :require))
+    (when (get st "stacktrace")
+      (require 'vinyasa.stacktrace))
+    (when (get st "repl")
+      (intern apropos clojure.repl/apropos :require)
+      (intern dir  clojure.repl/dir)
+      (intern doc  clojure.repl/doc)
+      (intern find-doc clojure.repl/find-doc)
+      (intern root-cause clojure.repl/root-cause)
+      (intern source clojure.repl/source))))
 
-(defn pull-fn [lib]
-  (cemerick.pomegranate/add-dependencies
-   :coordinates [[(symbol lib) "RELEASE"]]
-   :repositories {"clojars" "http://clojars.org/repo"
-                  "central" "http://repo1.maven.org/maven2/"}))
-
-(intern 'clojure.core 'pull pull-fn)
-
-
-(defn all-methods [x]
-    (->> x reflect 
-           :members 
-           (filter :return-type)  
-           (map :name) 
-           sort 
-           (map #(str "." %))
-           distinct
-           println))
-           
-           
+(require '[io.aviso.ansi :as v])
+(println (str "oeuoeu"  ( (v/blue (v/italic  "oeuoeu")))))
+(require '[io.aviso.exception :as x])
+(x/write-exception (ex-info "Oeuoeu" {:a 1}))
