@@ -1,6 +1,6 @@
 # vinyasa
 
-Give your clojure workflow more flow.
+[Give your clojure workflow more flow](http://z.caudate.me/give-your-clojure-workflow-more-flow/)
 
 ## Installation
 
