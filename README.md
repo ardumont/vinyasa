@@ -149,10 +149,8 @@ I have imported the following vars into clojure.core:
     - from clojure.pprint:
       - `pprint` as #'clojure.core/>pprint   
 
-
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 Chris Zheng
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the MIT License
