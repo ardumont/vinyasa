@@ -2,7 +2,7 @@
 
 [Give your clojure workflow more flow](http://z.caudate.me/give-your-clojure-workflow-more-flow/)
 
-The minimum leiningen version required for vinyasa is "2.3.4". Please do an upgrade of leiningen before using it.
+The minimum leiningen version required for vinyasa is `2.3.4`. Please do an upgrade of leiningen before using it.
 
     $ lein upgrade
 
@@ -13,7 +13,7 @@ Add `vinyasa` to your `profile.clj`:
 ```clojure
 {:user {:plugins [...]   
         :dependencies [....
-                       [im.chit/vinyasa "0.1.0"]
+                       [im.chit/vinyasa "0.1.1"]
                        ....]
         ....}
         :injections [...
