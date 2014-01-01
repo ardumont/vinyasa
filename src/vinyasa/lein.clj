@@ -4,15 +4,14 @@
 
 (defn init []
   (if-let [lein-version (get (System/getenv) "LEIN_VERSION")]
-    (do (println (vinyasa.pull/pull 'leiningen lein-version))
-        (require '[leiningen.core.main :as lein]
-                 '[leiningen.core.user :as user]
-                 '[leiningen.core.project :as project]))
-    (throw (Exception. "Cannot find the variable LEIN_VERSION in System/getenv"))))
+     (vinyasa.pull/pull 'leiningen lein-version)
+     (throw (Exception. "Cannot find the variable LEIN_VERSION in System/getenv"))))
 
-(init)
+(require '[leiningen.core.main :as lein]
+         '[leiningen.core.user :as user]
+         '[leiningen.core.project :as project])
 
-(defn lein
+(defn lein-fn
   "Command-line entry point."
   [& raw-args]
   (try
@@ -29,3 +28,6 @@
       (when (:min-lein-version project) (#'lein/verify-min-version project))
       (#'lein/configure-http)
       (#'lein/resolve-and-apply project raw-args))))
+
+(defmacro lein [& args]
+  `(lein-fn ~@(map str args)))
