@@ -28,7 +28,7 @@ Add `vinyasa` to your `profile.clj`:
 
 ## Quickstart:
 
-If you are in emacs and are in a clojure project, you can run `nrepl-jack-in` and use the added functionality straight away once installed in `profiles.clj`.
+Once `profiles.clj` is installed, run `lein repl`.
 
 ```clojure
 > (lein)
