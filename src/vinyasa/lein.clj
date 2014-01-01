@@ -1,15 +1,14 @@
 (ns vinyasa.lein
   (:require [clojure.java.io :as io]
+            [leiningen.core.main :as lein]
+            [leiningen.core.user :as user]
+            [leiningen.core.project :as project]
             vinyasa.pull))
 
 (defn init []
   (if-let [lein-version (get (System/getenv) "LEIN_VERSION")]
      (vinyasa.pull/pull 'leiningen lein-version)
      (throw (Exception. "Cannot find the variable LEIN_VERSION in System/getenv"))))
-
-(require '[leiningen.core.main :as lein]
-         '[leiningen.core.user :as user]
-         '[leiningen.core.project :as project])
 
 (defn lein-fn
   "Command-line entry point."

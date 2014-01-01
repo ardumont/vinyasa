@@ -2,6 +2,10 @@
 
 [Give your clojure workflow more flow](http://z.caudate.me/give-your-clojure-workflow-more-flow/)
 
+The minimum leiningen version required for vinyasa is "2.3.4". Please do an upgrade of leiningen before using it.
+
+    $ lein upgrade
+
 ## Installation
 
 Add `vinyasa` to your `profile.clj`:
@@ -22,14 +26,16 @@ Add `vinyasa` to your `profile.clj`:
       }
 ```
 
-## Usage:
+## Quickstart:
 
-If you are in emacs and are in a clojure project, you can run `nrepl-jack-in` and use the added functionality straight away. If you are running lein repl and are in the `user` namespace, reload the `user` namespace before using:
+If you are in emacs and are in a clojure project, you can run `nrepl-jack-in` and use the added functionality straight away once installed in `profiles.clj`.
 
 ```clojure
-> (ns user)
 > (lein)
-> (pull hiccup)
+> (pull 'hiccup)
+> (inject 'clojure.core '[[hiccup.core html]])
+> (html [:p "Hello World"])
+;;=> "<p>hello world</p>"
 ```
 
 ### pull

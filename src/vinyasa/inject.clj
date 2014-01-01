@@ -39,4 +39,5 @@
   ([to-ns prefix [row & more]]
      (when-not (nil? row)
        (inject-row to-ns prefix row)
+       (refer-clojure)
        (recur to-ns prefix more))))
