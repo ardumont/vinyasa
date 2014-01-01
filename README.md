@@ -78,26 +78,30 @@ Don't you wish that you had the power of leiningen within the repl itself? `lein
 
 > (lein push)        ;; Deploy on clojars I still use lein-clojars 
 ```
-### inject - usage
+### inject
 
-`inject` is used to add additional functionality to namespaces (primarily clojure.core). It works with macros and functions (unlike `intern` which only works with functions):
+I find that when I am debugging, there are additional functionality that is needed which is not included in clojure.core. The most commonly used function is `pprint` and it is much better if the function came with me when I was debugging.
 
-    > (inject 'clojure.core '[[clojure.repl dir]])
-    ;; => will intern #'clojure.repl/dir to #'clojure.core/dir
-    
-    > (clojure.core/dir clojure.core)
-    ;; *
-    ;; *'
-    ;; *1
-    ;; *2
-    ;; *3
-    ;; *agent*
-    ;; *allow-unresolved-vars*
-    ;; *assert*
-    ;;
-    ;; ...
-    ;; ...
-    
+The best place to put all of these functions in in the `clojure.core` namespace
+`inject` is used to add additional functionality to namespaces so that the functions are there right when I need them. Inject also works with macros and functions (unlike `intern` which only works with functions):
+
+```clojure
+> (inject 'clojure.core '[[clojure.repl dir]])
+;; => will intern #'clojure.repl/dir to #'clojure.core/dir
+
+> (clojure.core/dir clojure.core)
+;; *
+;; *'
+;; *1
+;; *2
+;; *3
+;; *agent*
+;; *allow-unresolved-vars*
+;; *assert*
+;;
+;; ...
+;; ...
+```    
 
 `inject` can also work with multiple entries:
 
@@ -142,25 +146,24 @@ Don't you wish that you had the power of leiningen within the repl itself? `lein
                           [io.aviso.repl [pretty-pst >pst]
                           [clojure.pprint pprint]])]}}
 ```
-I have imported the following vars into clojure.core:
-
+I have now imported the following vars into clojure.core and they will stay with me as I am coding in emacs:
 
   - from vinyasa:  
-    - `inject` as #'clojure.core/inject
-    - `pull` as #'clojure.core/pull
-    - `lein` as #'clojure.core/lein
+    - `inject` as `#'clojure.core/inject`
+    - `pull` as `#'clojure.core/pull`
+    - `lein` as `#'clojure.core/lein`
   - from tools.namespace:
-    - `refresh` as #'clojure.core/refresh
+    - `refresh` as `#'clojure.core/refresh`
   - from clojure.repl:   
-    - `apropos` as #'clojure.core/>apropos
-    - `dir` as #'clojure.core/>dir
-    - `doc` as #'clojure.core/>doc
-    - `find-doc` as #'clojure.core/>find-doc
-    - `root-cause` as #'clojure.core/>cause
+    - `apropos` as `#'clojure.core/>apropos`
+    - `dir` as `#'clojure.core/>dir`
+    - `doc` as `#'clojure.core/>doc`
+    - `find-doc` as `#'clojure.core/>find-doc`
+    - `root-cause` as `#'clojure.core/>cause`
   - from io.aviso.repl:
-    - `pretty-pst` as #'clojure.core/>pst   
+    - `pretty-pst` as `#'clojure.core/>pst`   
   - from clojure.pprint:
-    - `pprint` as #'clojure.core/>pprint   
+    - `pprint` as `#'clojure.core/>pprint`
 
 ## License
 
