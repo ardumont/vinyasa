@@ -4,4 +4,4 @@
   :license {:name "The MIT License"
             :url "http://http://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [com.cemerick/pomegranate "0.2.0"]])
+                 [leiningen "2.3.4"]])
