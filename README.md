@@ -13,7 +13,7 @@ Add `vinyasa` to your `profile.clj`:
 ```clojure
 {:user {:plugins [...]   
         :dependencies [....
-                       [im.chit/vinyasa "0.1.1"]
+                       [im.chit/vinyasa "0.1.2"]
                        ....]
         ....}
         :injections [...
@@ -139,7 +139,7 @@ The best place to put all of these functions in in the `clojure.core` namespace
         :dependencies [[spyscope "0.1.4"]
                        [org.clojure/tools.namespace "0.2.4"]
                        [io.aviso/pretty "0.1.8"]
-                       [im.chit/vinyasa "0.1.1"]]
+                       [im.chit/vinyasa "0.1.2"]]
          :injections [(require 'spyscope.core)                
                       (require 'vinyasa.inject)            
                       (vinyasa.inject/inject 'clojure.core '>
