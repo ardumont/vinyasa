@@ -1,44 +1,36 @@
 (ns vinyasa.lein
   (:require [clojure.java.io :as io]
+            [clojure.walk :refer [postwalk]]
             [clojure.repl :refer [source-fn]]
-            vinyasa.pull))
+            [cemerick.pomegranate :as pom]))
 
-(defn init []
-  (if-let [lein-version (get (System/getenv) "LEIN_VERSION")]
-    (let [lein-file (-> (.get (System/getenv) "CLASSPATH")
-                    (clojure.string/split #":")
-                    second)
-          url     (.toURL (.toURI (io/file lein-file)))
-          lein-cl (clojure.lang.DynamicClassLoader. (.getContextClassLoader (Thread/currentThread)))]
-      (.addURL lein-cl url)
-      (.setContextClassLoader (Thread/currentThread) lein-cl)
-      (.getContextClassLoader (Thread/currentThread)))
-    (throw (Exception. "Cannot find the variable LEIN_VERSION in System/getenv"))))
+(def lein-jar-path
+  (-> (.get (System/getenv) "CLASSPATH")
+      (clojure.string/split #":")
+      (->> (filter #(re-find #"leiningen-.*-standalone.jar" %)))
+      (first)))
 
+(require '[leiningen.core.main :as lein]
+         '[leiningen.core.project :as project])
 
-(do (init)
-    (require '[leiningen.core.main :as lein]
-             '[leiningen.core.user :as user]
-             '[leiningen.core.project :as project]))
+(def lein-main-form
+  (postwalk
+   (fn [f]
+     (cond (and (list? f) (= 'exit (first f))) nil
+           (list? f) (filter (comp not nil?) f)
+           :else f))
+   (read-string (source-fn 'leiningen.core.main/-main))))
 
+(in-ns 'leiningen.core.main)
+(eval vinyasa.lein/lein-main-form)
+(in-ns 'vinyasa.lein)
 
-(defn lein-fn
-  "Command-line entry point."
-  [& raw-args]
-  (try
-    (user/init)
-    (let [project (project/init-project
-                   (if (.exists (io/file lein/*cwd* "project.clj"))
-                     (project/read (str (io/file lein/*cwd* "project.clj")))
-                     (-> (project/make {:eval-in :leiningen :prep-tasks []
-                                        :source-paths ^:replace []
-                                        :resource-paths ^:replace []
-                                        :test-paths ^:replace []})
-                         project/project-with-profiles
-                         (project/init-profiles [:default]))))]
-      (when (:min-lein-version project) (#'lein/verify-min-version project))
-      (#'lein/configure-http)
-      (#'lein/resolve-and-apply project raw-args))))
+(def ^:dynamic *project*
+  (try (project/read "project.clj")
+       (catch Exception e)))
+       
+(if (nil? *project*)
+  (println "WARNING: vinyasa.lein/lein will not work without project.clj"))
 
 (defmacro lein [& args]
-  `(lein-fn ~@(map str args)))
+  `(leiningen.core.main/-main ~@(map str args)))
