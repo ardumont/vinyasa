@@ -29,6 +29,7 @@ So `<VERSION>` in this case would be `"2.3.4"`
       }
 ```
 
+*NOTE* Its very important that `leiningen` is in your dependencies.
 
 ## Quickstart:
 
@@ -136,7 +137,7 @@ You can then change legs in `testing.Dog` from `3` to `4`, save and go back to y
 
 If you have more files, ie. copy your Dog.java file to Cat.java and do a global replace:
 
-```
+```clojure
 (reimport) ;; will load all classes into your namespace
 ;;=> 'testing.Dog' imported from <project>/target/reload/testing/Dog.class
 ;;   'testing.Cat' imported from <project>/target/reload/testing/Cat.class
