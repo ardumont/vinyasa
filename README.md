@@ -2,18 +2,20 @@
 
 [Give your clojure workflow more flow](http://z.caudate.me/give-your-clojure-workflow-more-flow/)
 
-The minimum leiningen version required for vinyasa is `2.3.4`. Please do an upgrade of leiningen before using it.
-
-    $ lein upgrade
-
 ## Installation
 
-Add `vinyasa` to your `profile.clj`:
+Add `vinyasa` to your `profile.clj` as well as your version of leiningen. Run `lein version` to find out:
+
+    $ lein version
+    Leiningen 2.3.4 on Java 1.7.0_60-ea Java HotSpot(TM) 64-Bit Server VM
+
+So `<VERSION>` in this case would be `"2.3.4"`
 
 ```clojure
 {:user {:plugins [...]   
         :dependencies [....
-                       [im.chit/vinyasa "0.1.2"]
+                       [leiningen <VERSION>]
+                       [im.chit/vinyasa "0.1.5"]
                        ....]
         ....}
         :injections [...
@@ -21,20 +23,23 @@ Add `vinyasa` to your `profile.clj`:
                      (inj/inject 'clojure.core
                        '[[vinyasa.inject inject]
                          [vinyasa.pull pull]
-                         [vinyasa.lein lein]])
+                         [vinyasa.lein lein]
+                         [vinyasa.reimport reimport]])
                      ...]
       }
 ```
+
 
 ## Quickstart:
 
 Once `profiles.clj` is installed, run `lein repl`.
 
 ```clojure
-> (lein)
-> (pull 'hiccup)
-> (inject 'clojure.core '[[hiccup.core html]])
-> (html [:p "Hello World"])
+> (lein)    ;; => entry point to leiningen
+> (reimport) ;; => dynamically reloads *.java files
+> (pull 'hiccup) ;; => pull repositories from clojars
+> (inject 'clojure.core '[[hiccup.core html]]) ;; => injects new methods into clojure.core
+> (html [:p "Hello World"]) ;; => injected method
 ;;=> "<p>hello world</p>"
 ```
 
@@ -76,14 +81,61 @@ Don't you wish that you had the power of leiningen within the repl itself? `lein
 ;;  .....
 ;;  .....
 
-> (lein javac)       ;; Compile java classes
-
 > (lein install)     ;; Install to local maven repo
 
 > (lein uberjar)     ;; Create a jar-file
 
-> (lein push)        ;; Deploy on clojars I still use lein-clojars 
+> (lein push)        ;; Deploy on clojars (I am using lein-clojars plugin) 
+
+> (lein javac)       ;; Compile java classes (use vinyasa.reimport instead)
+
 ```
+
+### reimport
+
+Don't you wish that you could make some changes to your java files and have them instantly loaded into your repl without restarting? Well now you can!
+
+For example, in project.clj, you have specified your `:java-source-paths` 
+
+```clojure
+(defproject .....
+   :source-paths ["src/clojure"]
+   :java-source-paths ["src/java"]
+   ....)
+```
+
+and you have a file `src/java/testing/Dog.java`
+
+```java
+package testing;
+public class Dog{
+  public int legs = 3;  
+  public Dog(){};
+}
+```
+
+You can load it into your library dynamically using `reimport`
+
+```clojure
+(reimport '[testing.Dog])
+;;=> 'testing.Dog' imported from <project>/target/reload/testing/Dog.class
+
+(.legs (Dog.))
+;; => 3
+```
+
+You can then change legs in `testing.Dog` from `3` to `4`, save and go back to your repl:
+
+```clojure
+(reimport '[[testing Dog]]) ;; supports multiple classes
+;;=> 'testing.Dog' imported from <project>/target/reload/testing/Dog.class
+
+(.legs (Dog.))
+;; => 4
+```
+
+Clojure has just become the best environment for Java Development!
+
 ### inject
 
 I find that when I am debugging, there are additional functionality that is needed which is not included in clojure.core. The most commonly used function is `pprint` and it is much better if the function came with me when I was debugging.
@@ -136,40 +188,28 @@ The best place to put all of these functions in in the `clojure.core` namespace
 
 ```clojure
 {:user {:plugins [...]
-        :dependencies [[spyscope "0.1.4"]
-                       [org.clojure/tools.namespace "0.2.4"]
-                       [io.aviso/pretty "0.1.8"]
-                       [im.chit/vinyasa "0.1.2"]]
-         :injections [(require 'spyscope.core)                
-                      (require 'vinyasa.inject)            
+         :dependencies [[spyscope "0.1.4"]
+                        [org.clojure/tools.namespace "0.2.4"]
+                        [io.aviso/pretty "0.1.8"]
+                        [leiningen "2.3.4"]
+                        [im.chit/vinyasa "0.1.5"]]
+         :injections [(require 'spyscope.core)
+                      (require 'vinyasa.inject)
+                      (vinyasa.inject/inject 'clojure.core
+                        '[[vinyasa.inject inject]
+                          [vinyasa.pull pull]
+                          [vinyasa.lein lein]
+                          [vinyasa.reimport reimport]])
                       (vinyasa.inject/inject 'clojure.core '>
-                        '[[vinyasa.inject [inject inject]]
-                          [vinyasa.pull [pull pull]]
-                          [vinyasa.lein [lein lein]]
-                          [clojure.tools.namespace.repl [refresh refresh]
-                          [clojure.repl apropos dir doc find-doc source
-                                        [root-cause >cause]]]
-                          [io.aviso.repl [pretty-pst >pst]
-                          [clojure.pprint pprint]])]}}
+                        '[[cemerick.pomegranate add-classpath get-classpath resources]
+                          [clojure.tools.namespace.repl refresh]
+                          [clojure.repl apropos dir doc find-doc source pst 
+                                        [root-cause >cause]]
+                          [clojure.pprint pprint]
+                          [clojure.java.shell sh]
+                          [io.aviso.binary [write-binary >bin]]])]}}
 ```
 I have now imported the following vars into clojure.core and they will stay with me as I am coding in emacs:
-
-  - from vinyasa:  
-    - `inject` as `#'clojure.core/inject`
-    - `pull` as `#'clojure.core/pull`
-    - `lein` as `#'clojure.core/lein`
-  - from tools.namespace:
-    - `refresh` as `#'clojure.core/refresh`
-  - from clojure.repl:   
-    - `apropos` as `#'clojure.core/>apropos`
-    - `dir` as `#'clojure.core/>dir`
-    - `doc` as `#'clojure.core/>doc`
-    - `find-doc` as `#'clojure.core/>find-doc`
-    - `root-cause` as `#'clojure.core/>cause`
-  - from io.aviso.repl:
-    - `pretty-pst` as `#'clojure.core/>pst`   
-  - from clojure.pprint:
-    - `pprint` as `#'clojure.core/>pprint`
 
 ## License
 

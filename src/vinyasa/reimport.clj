@@ -1,16 +1,25 @@
 (ns vinyasa.reimport
   (:require [leiningen.core.project :as project]
+            [leiningen.core.eval :as eval]
+            [leiningen.javac :as javac]
+            [clojure.walk :refer [postwalk]]
+            [clojure.repl :refer [source-fn]]
             [clojure.java.io :as io]
             [clojure.java.shell :as sh]
-            [vinyasa.lein]))
+            [vinyasa.lein])
+  (:refer-clojure :exclude [lein]))
 
-(def ^:dynamic *target-dir*
-      (:target-path vinyasa.lein/*project*))
-
-(defn to-byte-array [^java.io.File x]
-  (with-open [buffer (java.io.ByteArrayOutputStream.)]
-    (io/copy x buffer)
-    (.toByteArray buffer)))
+(defn- run-javac
+  [project args]
+  (let [compile-path (:compile-path project)
+        files (#'javac/stale-java-sources (:java-source-paths project) compile-path)
+        javac-opts (vec (#'javac/javac-options project files args))
+        form (#'javac/subprocess-form compile-path files javac-opts)]
+    (when (seq files)
+      (binding [eval/*pump-in* false]
+        (eval/eval-in
+         (project/merge-profiles project [javac/subprocess-profile])
+         form)))))
 
 (defn to-byte-array [^java.io.File x]
   (with-open [buffer (java.io.ByteArrayOutputStream.)]
@@ -23,7 +32,8 @@
                 classname
                 (to-byte-array f)
                 nil)
-  (println (format "'%s' imported from %s"  classname (.getPath f))))
+  (println (format "'%s' imported from %s"  classname (.getPath f)))
+  (.importClass @#'clojure.core/*ns* (Class/forName classname)))
 
 (defn reimport-path-from-dir
   [dir path]
@@ -51,22 +61,25 @@
     (doseq [path paths]
       (reimport-path-from-dir dir path))))
 
-(defn reimport-compile [target-path]
-  (let [reload-path (str target-path java.io.File/separator
-                         (or (:target-reload-path vinyasa.lein/*project*)
-                             "reload"))]
-    (vinyasa.lein/lein javac)
-    (sh/sh "rm" "-R" reload-path)
-    (sh/sh "mv" (str target-path java.io.File/separator "classes")
-           reload-path)
-    reload-path))
+(defn make-reload-path [project]
+  (str (:target-path project)
+       java.io.File/separator
+       (or (:target-reload-path project)
+           "reload")))
 
-(defn reimport-all
-  [target-path]
-  (if target-path
-    (let [reload-path (reimport-compile target-path)]
-      (reimport-reload reload-path))
-    (throw (Exception. "No target directory found"))))
+(defn reimport-compile [project args]
+  (let [reload-path (make-reload-path project)
+        compile-path (:compile-path project)]
+    (try (sh/sh "rm" "-f" compile-path)
+         (if (.exists (io/file reload-path))
+           (sh/sh "mv" reload-path compile-path))
+         (run-javac project args)
+         reload-path
+         (catch Exception e
+           (println "Failed: Java files did not properly compile:"
+                    (pr-str (vec (:java-source-paths project )))))
+         (finally
+           (sh/sh "mv" compile-path reload-path)))))
 
 (defn reimport-selected-list [args]
   (mapcat (fn [x]
@@ -76,19 +89,22 @@
                   :else [(str x)]))
           args))
 
-(defn reimport-selected [target-path args]
-  (if target-path
-    (let [reload-path (reimport-compile target-path)]
-      (doseq [cl (reimport-selected-list args)]
-        (reimport-class-from-dir reload-path cl)))
-    (throw (Exception. "No target directory found"))))
+(defn reimport-
+  ([] (reimport- nil))
+  ([classes] (reimport- vinyasa.lein/*project* classes))
+  ([project classes]
+      (let [reload-path (make-reload-path project)]
+        (cond (or (empty? classes)
+                  (= :all (first classes)))
+              (reimport-reload reload-path)
+
+              :else
+              (doseq [cl (reimport-selected-list classes)]
+                (reimport-class-from-dir reload-path cl))))))
 
 (defn reimport
-  ([] (reimport :all))
+  ([] (reimport nil))
   ([classes]
-     (cond (or (= :all classes)
-               (empty? classes))
-           (reimport-all *target-dir*)
-
-           :else
-           (reimport-selected *target-dir* classes))))
+      (let [project vinyasa.lein/*project*]
+        (if-let [reload-path (reimport-compile project nil)]
+          (reimport- project classes)))))
