@@ -218,11 +218,32 @@ The best place to put all of these functions in in the `clojure.core` namespace
                           [clojure.repl apropos dir doc find-doc source pst 
                                         [root-cause >cause]]
                           [clojure.pprint pprint]
-                          [clojure.java.shell sh]
-                          [io.aviso.binary [write-binary >bin]]])]}}
+                          [clojure.java.shell sh]])]}}
 ```
 I have now imported the following vars into clojure.core and they will stay with me as I am coding in emacs:
 
+ -  - from vinyasa:  
+ -    - `inject` as `#'clojure.core/inject`
+ -    - `pull` as `#'clojure.core/pull`
+ -    - `lein` as `#'clojure.core/lein`
+ -    - `reimport` as `#'clojure.core/reimport`
+ -  - from tools.namespace:
+ -    - `refresh` as `#'clojure.core/refresh`
+ -  - from clojure.repl:   
+ -    - `apropos` as `#'clojure.core/>apropos`
+ -    - `dir` as `#'clojure.core/>dir`
+ -    - `doc` as `#'clojure.core/>doc`
+ -    - `find-doc` as `#'clojure.core/>find-doc`
+ -    - `root-cause` as `#'clojure.core/>cause``
+ -    - `pst` as `#'clojure.core/>pst`
+ -  - from clojure.pprint:
+ -    - `pprint` as `#'clojure.core/>pprint`
+ -  - from clojure.java.shell:
+ -    - `sh` as `#'clojure.core/>sh`
+ -  - from cemerick.pomegranate:
+ -    - `add-classpath` as `#'clojure.core/>add-classpath`
+ -    - `get-classpath` as `#'clojure.core/>get-classpath`
+ -    - `resources` as `#'clojure.core/>resources`
 ## License
 
 Copyright © 2013 Chris Zheng
