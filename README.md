@@ -15,7 +15,7 @@ So `<VERSION>` in this case would be `"2.3.4"`
 {:user {:plugins [...]   
         :dependencies [....
                        [leiningen <VERSION>]
-                       [im.chit/vinyasa "0.1.6"]
+                       [im.chit/vinyasa "0.1.7"]
                        ....]
         ....}
         :injections [...
@@ -204,7 +204,7 @@ The best place to put all of these functions in in the `clojure.core` namespace
                         [org.clojure/tools.namespace "0.2.4"]
                         [io.aviso/pretty "0.1.8"]
                         [leiningen "2.3.4"]
-                        [im.chit/vinyasa "0.1.6"]]
+                        [im.chit/vinyasa "0.1.7"]]
          :injections [(require 'spyscope.core)
                       (require 'vinyasa.inject)
                       (vinyasa.inject/inject 'clojure.core
