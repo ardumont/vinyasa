@@ -1,4 +1,4 @@
-(defproject im.chit/vinyasa "0.1.6"
+(defproject im.chit/vinyasa "0.1.7"
   :description "Utilities to make the development process smoother"
   :url "http://www.github.com/zcaudate/vinyasa"
   :license {:name "The MIT License"
