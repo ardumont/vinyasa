@@ -5,9 +5,7 @@
             [clojure.walk :refer [postwalk]]
             [clojure.repl :refer [source-fn]]
             [clojure.java.io :as io]
-            [clojure.java.shell :as sh]
-            [vinyasa.lein])
-  (:refer-clojure :exclude [lein]))
+            [clojure.java.shell :as sh]))
 
 (defn- run-javac
   [project args]

@@ -2,16 +2,9 @@
   (:require [clojure.java.io :as io]
             [clojure.walk :refer [postwalk]]
             [clojure.repl :refer [source-fn]]
-            [cemerick.pomegranate :as pom]))
-
-(def lein-jar-path
-  (-> (.get (System/getenv) "CLASSPATH")
-      (clojure.string/split #":")
-      (->> (filter #(re-find #"leiningen-.*-standalone.jar" %)))
-      (first)))
-
-(require '[leiningen.core.main :as lein]
-         '[leiningen.core.project :as project])
+            [cemerick.pomegranate :as pom]
+            [leiningen.core.main :as lein]
+            [leiningen.core.project :as project]))
 
 (def lein-main-form
   (postwalk
