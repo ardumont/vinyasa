@@ -4,7 +4,7 @@
 
 ## Installation
 
-Add `vinyasa` to your `profile.clj` as well as your version of leiningen. Run `lein version` to find out:
+Add `vinyasa` to your `profiles.clj` (located in `~/.lein/profiles.clj`) as well as your version of leiningen. Run `lein version` to find out:
 
     $ lein version
     Leiningen 2.3.4 on Java 1.7.0_60-ea Java HotSpot(TM) 64-Bit Server VM
@@ -15,7 +15,7 @@ So `<VERSION>` in this case would be `"2.3.4"`
 {:user {:plugins [...]   
         :dependencies [....
                        [leiningen <VERSION>]
-                       [im.chit/vinyasa "0.1.7"]
+                       [im.chit/vinyasa "0.1.8"]
                        ....]
         ....}
         :injections [...
@@ -29,7 +29,7 @@ So `<VERSION>` in this case would be `"2.3.4"`
       }
 ```
 
-*NOTE* Its very important that `leiningen` is in your dependencies.
+*NOTE* Its very important that `leiningen` is in your dependencies as `lein` and `reimport` have dependencies on leiningen functions
 
 ## Quickstart:
 
@@ -102,6 +102,7 @@ For example, in project.clj, you have specified your `:java-source-paths`
 (defproject .....
    :source-paths ["src/clojure"]
    :java-source-paths ["src/java"]
+   :java-test-paths ["test/java"]    ;; *.java files that are not included in package
    ....)
 ```
 
@@ -204,7 +205,7 @@ The best place to put all of these functions in in the `clojure.core` namespace
                         [org.clojure/tools.namespace "0.2.4"]
                         [io.aviso/pretty "0.1.8"]
                         [leiningen "2.3.4"]
-                        [im.chit/vinyasa "0.1.7"]]
+                        [im.chit/vinyasa "0.1.8"]]
          :injections [(require 'spyscope.core)
                       (require 'vinyasa.inject)
                       (vinyasa.inject/inject 'clojure.core
