@@ -2,6 +2,17 @@
 
 [Give your clojure workflow more flow](http://z.caudate.me/give-your-clojure-workflow-more-flow/)
 
+## Whats New
+
+#### 0.1.8
+Breaking changes to `reimport`. Now reimport is used like this:
+
+    (reimport :all)  ;; compile import all symbols into namespace
+    
+    (reimport 'com.example.Util 
+              '[net.example Hello World]
+              false) ;; do not import symbols
+
 ## Installation
 
 Add `vinyasa` to your `profiles.clj` (located in `~/.lein/profiles.clj`) as well as your version of leiningen. Run `lein version` to find out:
@@ -119,7 +130,7 @@ public class Dog{
 You can load it into your library dynamically using `reimport`
 
 ```clojure
-(reimport '[testing.Dog])
+(reimport 'testing.Dog)
 ;;=> 'testing.Dog' imported from <project>/target/reload/testing/Dog.class
 
 (.legs (Dog.))
@@ -129,7 +140,7 @@ You can load it into your library dynamically using `reimport`
 You can then change legs in `testing.Dog` from `3` to `4`, save and go back to your repl:
 
 ```clojure
-(reimport '[[testing Dog]]) ;; supports multiple classes
+(reimport '[testing Dog]) ;; supports multiple classes
 ;;=> 'testing.Dog' imported from <project>/target/reload/testing/Dog.class
 
 (.legs (Dog.))
