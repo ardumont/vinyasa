@@ -4,6 +4,11 @@
 
 ## Whats New
 
+#### 0.1.9
+Changed `vinyasa.lein` according to [comments](http://z.caudate.me/clojure-dynamic-languages-creativity-and-simplicity/) on blog.
+
+WARNING: There are [issues](https://github.com/zcaudate/vinyasa/issues/3) with adding leiningen as a dependency. It should be disabled if it causes problems.
+
 #### 0.1.8
 Breaking changes to `reimport`. Now reimport is used like this:
 
@@ -15,18 +20,13 @@ Breaking changes to `reimport`. Now reimport is used like this:
 
 ## Installation
 
-Add `vinyasa` to your `profiles.clj` (located in `~/.lein/profiles.clj`) as well as your version of leiningen. Run `lein version` to find out:
-
-    $ lein version
-    Leiningen 2.3.4 on Java 1.7.0_60-ea Java HotSpot(TM) 64-Bit Server VM
-
-So `<VERSION>` in this case would be `"2.3.4"`
-
+Add `vinyasa` to your `profiles.clj` (located in `~/.lein/profiles.clj`) as well as your version of leiningen. Please note the issue with `vinyasa.lein` with light table as well as other libraries. You may need to disable `vinyasa.lein` and `leiningen` if there are problems.
+ 
 ```clojure
 {:user {:plugins [...]   
         :dependencies [....
-                       [leiningen <VERSION>]
-                       [im.chit/vinyasa "0.1.8"]
+                       [leiningen #=(leiningen.core.main/leiningen-version)]
+                       [im.chit/vinyasa "0.1.9"]
                        ....]
         ....}
         :injections [...
