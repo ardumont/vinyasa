@@ -8,14 +8,18 @@
 
 vinyasa has now been [repackaged](https://github.com/zcaudate/lein-repack). Functionality can now be accessed via seperate dependencies:
 
-    [im.chit/vinyasa.inject "0.2.0"]
-    [im.chit/vinyasa.pull "0.2.0"]
-    [im.chit/vinyasa.lein "0.2.0"]
-    [im.chit/vinyasa.reimport "0.2.0"]
+```clojure
+[im.chit/vinyasa.inject "0.2.0"]
+[im.chit/vinyasa.pull "0.2.0"]
+[im.chit/vinyasa.lein "0.2.0"]
+[im.chit/vinyasa.reimport "0.2.0"]
+```
 
 Or all of them together:
 
-    [im.chit/vinyasa "0.2.0"]
+```clojure
+[im.chit/vinyasa "0.2.0"]
+```
 
 #### 0.1.9
 Changed `vinyasa.lein` according to [comments](http://z.caudate.me/clojure-dynamic-languages-creativity-and-simplicity/) on blog.
@@ -25,12 +29,13 @@ WARNING: There are [issues](https://github.com/zcaudate/vinyasa/issues/3) with a
 #### 0.1.8
 Breaking changes to `reimport`. Now reimport is used like this:
 
-    (reimport :all)  ;; compile import all symbols into namespace
-    
-    (reimport 'com.example.Util 
-              '[net.example Hello World]
-              false) ;; do not import symbols
+```clojure
+(reimport :all)  ;; compile import all symbols into namespace
 
+(reimport 'com.example.Util 
+          '[net.example Hello World]
+          false) ;; do not import symbols
+```
 ## Installation
 
 Add `vinyasa` to your `profiles.clj` (located in `~/.lein/profiles.clj`) as well as your version of leiningen. Please note the issue with `vinyasa.lein` with light table as well as other libraries. You may need to disable `vinyasa.lein` and `leiningen` if there are problems.
