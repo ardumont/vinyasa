@@ -4,6 +4,19 @@
 
 ## Whats New
 
+#### 0.2.0
+
+vinyasa has now been [repackaged](https://github.com/zcaudate/lein-repack). Functionality can now be accessed via seperate dependencies:
+
+    [im.chit/vinyasa.inject "0.2.0"]
+    [im.chit/vinyasa.pull "0.2.0"]
+    [im.chit/vinyasa.lein "0.2.0"]
+    [im.chit/vinyasa.reimport "0.2.0"]
+
+Or all of them together:
+
+    [im.chit/vinyasa "0.2.0"]
+
 #### 0.1.9
 Changed `vinyasa.lein` according to [comments](http://z.caudate.me/clojure-dynamic-languages-creativity-and-simplicity/) on blog.
 
@@ -26,12 +39,12 @@ Add `vinyasa` to your `profiles.clj` (located in `~/.lein/profiles.clj`) as well
 {:user {:plugins [...]   
         :dependencies [....
                        [leiningen #=(leiningen.core.main/leiningen-version)]
-                       [im.chit/vinyasa "0.1.9"]
+                       [im.chit/vinyasa "0.2.0"]
                        ....]
         ....}
         :injections [...
                      (require '[vinyasa.inject :as inj])            
-                     (inj/inject 'clojure.core
+                     (inj/inject 'clojure.core '>
                        '[[vinyasa.inject inject]
                          [vinyasa.pull pull]
                          [vinyasa.lein lein]
@@ -216,7 +229,7 @@ The best place to put all of these functions in in the `clojure.core` namespace
                         [org.clojure/tools.namespace "0.2.4"]
                         [io.aviso/pretty "0.1.8"]
                         [leiningen "2.3.4"]
-                        [im.chit/vinyasa "0.1.8"]]
+                        [im.chit/vinyasa "0.2.0"]]
          :injections [(require 'spyscope.core)
                       (require 'vinyasa.inject)
                       (vinyasa.inject/inject 'clojure.core
@@ -260,6 +273,6 @@ I have now imported the following vars into clojure.core and they will stay with
 
 ## License
 
-Copyright © 2013 Chris Zheng
+Copyright © 2014 Chris Zheng
 
 Distributed under the MIT License
